@@ -7,14 +7,14 @@ const address = process.argv[2]
 if (!address) {
   return console.log('No input detected, please try again')
 } else {
-  geocode(address, (error, data) => {
+  geocode(address, (error, { latitude, longitude, location } = {}) => {
     if (error) return console.log(error)
     
-    forecast(data.latitude, data.longitude, (error, forecastData) => {
+    forecast(latitude, longitude, (error, { weather, temperature, precip } = {}) => {
       if (error) return console.log(error)
 
-      console.log(data.location)
-      console.log(`${forecastData.weather}. It is currently ${forecastData.temperature} degrees with a ${forecastData.precip}% chance of rain.`)
+      console.log(location)
+      console.log(`${weather}. It is currently ${temperature} degrees with a ${precip}% chance of rain.`)
     })
   })
 }
