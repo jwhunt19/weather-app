@@ -18,6 +18,8 @@
   "homepage": "https://github.com/jwhunt19/weather-app#readme",
   "dependencies": {
     "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20",
     "request": "^2.88.2"
   }
 }
