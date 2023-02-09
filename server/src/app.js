@@ -40,10 +40,17 @@ app.get('/help', (req, res) => {
   })
 })
 
-app.get('/weather', (req, res) => {
-  res.send({
-    forescast: 'sunny',
-    location: 'pizza town'
+app.get('/help/*', (req, res) => {
+  res.render('404', {
+    title: '404',
+    message: 'Help article not found'
+  })
+})
+
+app.get('/*', (req, res) => {
+  res.render('404', {
+    title: '404',
+    message: 'Page not found'
   })
 })
 
