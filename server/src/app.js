@@ -1,6 +1,10 @@
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
+require('dotenv').config();
+
+const geocode = require('../../utils/geocode')
+const forecast = require('../../utils/forecast')
 
 const app = express()
 
@@ -17,7 +21,7 @@ hbs.registerPartials(partialsPath)
 // Setup static directory to serve
 app.use(express.static(publicPath))
 
-
+// Index page
 app.get('', (req, res) => {
   res.render('index', {
     title: 'Weather',
@@ -25,6 +29,7 @@ app.get('', (req, res) => {
   })
 })
 
+// About page
 app.get('/about', (req, res) => {
   res.render('about', {
     title: 'About Me',
@@ -32,6 +37,7 @@ app.get('/about', (req, res) => {
   })
 })
 
+// Help pages
 app.get('/help', (req, res) => {
   res.render('help', {
     message: 'this is an example message',
@@ -40,6 +46,30 @@ app.get('/help', (req, res) => {
   })
 })
 
+// Weather API 
+app.get('/weather', (req, res) => {
+  if (!req.query.address) {
+    return res.send({
+      error: 'must provide an address'
+    })
+  }
+
+  geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
+    if (error) return res.send(error)
+    
+    forecast(latitude, longitude, (error, { weather, temperature, precip } = {}) => {
+      if (error) return res.send(error)
+
+      res.send({
+        forescast: `${weather}. It is currently ${temperature} degrees with a ${precip}% chance of rain.`,
+        location,
+        address: req.query.address
+      })
+    })
+  })
+})
+
+// Error handling for help articles
 app.get('/help/*', (req, res) => {
   res.render('404', {
     title: '404',
@@ -47,6 +77,7 @@ app.get('/help/*', (req, res) => {
   })
 })
 
+// Catch all 404 handling
 app.get('/*', (req, res) => {
   res.render('404', {
     title: '404',
